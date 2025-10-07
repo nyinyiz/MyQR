@@ -5,10 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,15 +23,18 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.ChipDefaults
 import com.nnzapp.myqr.data.Bank
-import com.nnzapp.myqr.data.BankRepository
+import com.nnzapp.myqr.presentation.viewmodel.BankListViewModel
 
 @Composable
 fun BankListScreen(
-    onBankClick: (Bank) -> Unit
+    viewModel: BankListViewModel = hiltViewModel(),
+    onBankClick: (Bank) -> Unit,
+    onAddBankClick: () -> Unit
 ) {
-    val context = LocalContext.current
-    val banks = BankRepository.loadBanks(context)
+    val banks by viewModel.banks.collectAsState()
     val listState = rememberScalingLazyListState()
 
     Scaffold(
@@ -57,6 +62,23 @@ fun BankListScreen(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.title3,
                     fontWeight = FontWeight.Bold
+                )
+            }
+
+            item {
+                Chip(
+                    onClick = onAddBankClick,
+                    label = {
+                        Text(
+                            text = "+ Add Bank",
+                            style = MaterialTheme.typography.button,
+                            textAlign = TextAlign.Center
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    colors = ChipDefaults.primaryChipColors()
                 )
             }
 
