@@ -1,4 +1,4 @@
-# MyQR - Wear OS QR Payment App
+# MyQR - Wear OS QR App
 
 Quick access to bank QR codes on your smartwatch for seamless digital payments.
 
