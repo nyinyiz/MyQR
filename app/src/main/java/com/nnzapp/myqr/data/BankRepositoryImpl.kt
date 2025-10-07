@@ -14,6 +14,10 @@ class BankRepositoryImpl(private val context: Context) : BankRepository {
     private val json = Json { ignoreUnknownKeys = true }
     private val dataStore = BankDataStore(context)
 
+    companion object {
+        private const val CUSTOM_BANK_ID_START = 1000
+    }
+
     private fun loadDefaultBanks(): List<Bank> {
         return try {
             val inputStream = context.resources.openRawResource(
@@ -48,9 +52,9 @@ class BankRepositoryImpl(private val context: Context) : BankRepository {
     }
 
     override fun getNextAvailableId(): Int {
-        // Start custom bank IDs from 1000 to avoid conflicts with default banks
+        // Start custom bank IDs from CUSTOM_BANK_ID_START to avoid conflicts with default banks
         val defaultBanks = loadDefaultBanks()
         val maxDefaultId = defaultBanks.maxOfOrNull { it.id } ?: 0
-        return maxOf(1000, maxDefaultId + 1)
+        return maxOf(CUSTOM_BANK_ID_START, maxDefaultId + 1)
     }
 }

@@ -1,12 +1,16 @@
 package com.nnzapp.myqr.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +40,7 @@ fun BankListScreen(
 ) {
     val banks by viewModel.banks.collectAsState()
     val listState = rememberScalingLazyListState()
+    var bankToDelete by remember { mutableStateOf<Bank?>(null) }
 
     Scaffold(
         positionIndicator = {
@@ -85,22 +90,44 @@ fun BankListScreen(
             items(banks) { bank ->
                 BankListItem(
                     bank = bank,
-                    onClick = { onBankClick(bank) }
+                    onClick = { onBankClick(bank) },
+                    onLongClick = {
+                        // Only allow deleting custom banks (id >= 1000)
+                        if (bank.id >= 1000) {
+                            bankToDelete = bank
+                        }
+                    }
                 )
             }
+        }
+        // Show delete confirmation dialog
+        bankToDelete?.let { bank ->
+            DeleteBankDialog(
+                bankName = bank.name,
+                onConfirm = {
+                    viewModel.deleteBank(bank.id)
+                    bankToDelete = null
+                },
+                onDismiss = { bankToDelete = null }
+            )
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BankListItem(
     bank: Bank,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
             .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -132,5 +159,67 @@ fun BankListItem(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
+    }
+}
+
+@Composable
+fun DeleteBankDialog(
+    bankName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Delete Bank?",
+            style = MaterialTheme.typography.title3,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = bankName,
+            style = MaterialTheme.typography.body1,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Chip(
+                onClick = onDismiss,
+                label = {
+                    Text(
+                        text = "Cancel",
+                        textAlign = TextAlign.Center
+                    )
+                },
+                modifier = Modifier.weight(1f),
+                colors = ChipDefaults.secondaryChipColors()
+            )
+
+            Chip(
+                onClick = onConfirm,
+                label = {
+                    Text(
+                        text = "Delete",
+                        textAlign = TextAlign.Center
+                    )
+                },
+                modifier = Modifier.weight(1f),
+                colors = ChipDefaults.primaryChipColors()
+            )
+        }
     }
 }

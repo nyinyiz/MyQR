@@ -87,7 +87,7 @@ fun AddBankScreen(
                     value = uiState.bankName,
                     onValueChange = { viewModel.updateBankName(it) },
                     placeholder = "e.g., My Bank",
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
                 )
             }
 
@@ -98,7 +98,7 @@ fun AddBankScreen(
                     value = uiState.accountName,
                     onValueChange = { viewModel.updateAccountName(it) },
                     placeholder = "e.g., John Doe",
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
                 )
             }
 
