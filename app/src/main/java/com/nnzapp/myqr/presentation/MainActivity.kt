@@ -3,10 +3,10 @@ package com.nnzapp.myqr.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
@@ -40,7 +40,7 @@ fun WearApp() {
 
         SwipeDismissableNavHost(
             navController = navController,
-            startDestination = "bank_list"
+            startDestination = "bank_list",
         ) {
             composable("bank_list") {
                 BankListScreen(
@@ -50,7 +50,7 @@ fun WearApp() {
                     },
                     onAddBankClick = {
                         navController.navigate("add_bank")
-                    }
+                    },
                 )
             }
 
@@ -69,7 +69,7 @@ fun WearApp() {
                     viewModel = addBankViewModel,
                     onBankAdded = {
                         navController.popBackStack()
-                    }
+                    },
                 )
             }
         }

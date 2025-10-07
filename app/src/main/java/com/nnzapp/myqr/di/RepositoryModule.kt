@@ -13,12 +13,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
-
     @Provides
     @Singleton
     fun provideBankRepository(
-        @ApplicationContext context: Context
-    ): BankRepository {
-        return BankRepositoryImpl(context)
-    }
+        @ApplicationContext context: Context,
+    ): BankRepository = BankRepositoryImpl(context)
 }

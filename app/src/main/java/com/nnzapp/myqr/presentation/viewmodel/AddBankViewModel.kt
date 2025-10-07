@@ -18,62 +18,64 @@ data class AddBankUiState(
     val qrCodeData: String = "",
     val selectedColor: String = "FF00A651",
     val isSaving: Boolean = false,
-    val isSaved: Boolean = false
+    val isSaved: Boolean = false,
 )
 
 @HiltViewModel
-class AddBankViewModel @Inject constructor(
-    private val addBankUseCase: AddBankUseCase,
-    private val getNextBankIdUseCase: GetNextBankIdUseCase
-) : ViewModel() {
+class AddBankViewModel
+    @Inject
+    constructor(
+        private val addBankUseCase: AddBankUseCase,
+        private val getNextBankIdUseCase: GetNextBankIdUseCase,
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(AddBankUiState())
+        val uiState: StateFlow<AddBankUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(AddBankUiState())
-    val uiState: StateFlow<AddBankUiState> = _uiState.asStateFlow()
-
-    fun updateBankName(name: String) {
-        _uiState.value = _uiState.value.copy(bankName = name)
-    }
-
-    fun updateAccountName(name: String) {
-        _uiState.value = _uiState.value.copy(accountName = name)
-    }
-
-    fun updateQrCodeData(data: String) {
-        _uiState.value = _uiState.value.copy(qrCodeData = data)
-    }
-
-    fun updateSelectedColor(color: String) {
-        _uiState.value = _uiState.value.copy(selectedColor = color)
-    }
-
-    fun saveBank() {
-        val state = _uiState.value
-        if (state.bankName.isBlank() || state.accountName.isBlank() || state.qrCodeData.isBlank()) {
-            return
+        fun updateBankName(name: String) {
+            _uiState.value = _uiState.value.copy(bankName = name)
         }
 
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSaving = true)
-            try {
-                val newBank = Bank(
-                    id = getNextBankIdUseCase(),
-                    name = state.bankName,
-                    accountName = state.accountName,
-                    logoColor = state.selectedColor,
-                    qrCodeData = state.qrCodeData
-                )
-                addBankUseCase(newBank)
-                _uiState.value = _uiState.value.copy(isSaving = false, isSaved = true)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isSaving = false)
+        fun updateAccountName(name: String) {
+            _uiState.value = _uiState.value.copy(accountName = name)
+        }
+
+        fun updateQrCodeData(data: String) {
+            _uiState.value = _uiState.value.copy(qrCodeData = data)
+        }
+
+        fun updateSelectedColor(color: String) {
+            _uiState.value = _uiState.value.copy(selectedColor = color)
+        }
+
+        fun saveBank() {
+            val state = _uiState.value
+            if (state.bankName.isBlank() || state.accountName.isBlank() || state.qrCodeData.isBlank()) {
+                return
+            }
+
+            viewModelScope.launch {
+                _uiState.value = _uiState.value.copy(isSaving = true)
+                try {
+                    val newBank =
+                        Bank(
+                            id = getNextBankIdUseCase(),
+                            name = state.bankName,
+                            accountName = state.accountName,
+                            logoColor = state.selectedColor,
+                            qrCodeData = state.qrCodeData,
+                        )
+                    addBankUseCase(newBank)
+                    _uiState.value = _uiState.value.copy(isSaving = false, isSaved = true)
+                } catch (e: Exception) {
+                    _uiState.value = _uiState.value.copy(isSaving = false)
+                }
             }
         }
-    }
 
-    fun isFormValid(): Boolean {
-        val state = _uiState.value
-        return state.bankName.isNotBlank() &&
-               state.accountName.isNotBlank() &&
-               state.qrCodeData.isNotBlank()
+        fun isFormValid(): Boolean {
+            val state = _uiState.value
+            return state.bankName.isNotBlank() &&
+                state.accountName.isNotBlank() &&
+                state.qrCodeData.isNotBlank()
+        }
     }
-}

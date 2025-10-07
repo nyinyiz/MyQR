@@ -9,8 +9,9 @@ import kotlinx.serialization.json.Json
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class BankRepositoryImpl(private val context: Context) : BankRepository {
-
+class BankRepositoryImpl(
+    private val context: Context,
+) : BankRepository {
     private val json = Json { ignoreUnknownKeys = true }
     private val dataStore = BankDataStore(context)
 
@@ -18,11 +19,12 @@ class BankRepositoryImpl(private val context: Context) : BankRepository {
         private const val CUSTOM_BANK_ID_START = 1000
     }
 
-    private fun loadDefaultBanks(): List<Bank> {
-        return try {
-            val inputStream = context.resources.openRawResource(
-                context.resources.getIdentifier("banks", "raw", context.packageName)
-            )
+    private fun loadDefaultBanks(): List<Bank> =
+        try {
+            val inputStream =
+                context.resources.openRawResource(
+                    context.resources.getIdentifier("banks", "raw", context.packageName),
+                )
             val reader = BufferedReader(InputStreamReader(inputStream))
             val jsonString = reader.use { it.readText() }
             json.decodeFromString<List<Bank>>(jsonString)
@@ -30,7 +32,6 @@ class BankRepositoryImpl(private val context: Context) : BankRepository {
             e.printStackTrace()
             emptyList()
         }
-    }
 
     override fun getAllBanks(): Flow<List<Bank>> {
         val defaultBanks = flowOf(loadDefaultBanks())
@@ -52,7 +53,6 @@ class BankRepositoryImpl(private val context: Context) : BankRepository {
     }
 
     override fun getNextAvailableId(): Int {
-        // Start custom bank IDs from CUSTOM_BANK_ID_START to avoid conflicts with default banks
         val defaultBanks = loadDefaultBanks()
         val maxDefaultId = defaultBanks.maxOfOrNull { it.id } ?: 0
         return maxOf(CUSTOM_BANK_ID_START, maxDefaultId + 1)

@@ -14,36 +14,19 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 object UseCaseModule {
+    @Provides
+    @ViewModelScoped
+    fun provideGetAllBanksUseCase(repository: BankRepository): GetAllBanksUseCase = GetAllBanksUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun provideGetAllBanksUseCase(
-        repository: BankRepository
-    ): GetAllBanksUseCase {
-        return GetAllBanksUseCase(repository)
-    }
+    fun provideAddBankUseCase(repository: BankRepository): AddBankUseCase = AddBankUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun provideAddBankUseCase(
-        repository: BankRepository
-    ): AddBankUseCase {
-        return AddBankUseCase(repository)
-    }
+    fun provideDeleteBankUseCase(repository: BankRepository): DeleteBankUseCase = DeleteBankUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun provideDeleteBankUseCase(
-        repository: BankRepository
-    ): DeleteBankUseCase {
-        return DeleteBankUseCase(repository)
-    }
-
-    @Provides
-    @ViewModelScoped
-    fun provideGetNextBankIdUseCase(
-        repository: BankRepository
-    ): GetNextBankIdUseCase {
-        return GetNextBankIdUseCase(repository)
-    }
+    fun provideGetNextBankIdUseCase(repository: BankRepository): GetNextBankIdUseCase = GetNextBankIdUseCase(repository)
 }

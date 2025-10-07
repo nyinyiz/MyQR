@@ -13,21 +13,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BankListViewModel @Inject constructor(
-    private val getAllBanksUseCase: GetAllBanksUseCase,
-    private val deleteBankUseCase: DeleteBankUseCase
-) : ViewModel() {
+class BankListViewModel
+    @Inject
+    constructor(
+        private val getAllBanksUseCase: GetAllBanksUseCase,
+        private val deleteBankUseCase: DeleteBankUseCase,
+    ) : ViewModel() {
+        val banks: StateFlow<List<Bank>> =
+            getAllBanksUseCase()
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = emptyList(),
+                )
 
-    val banks: StateFlow<List<Bank>> = getAllBanksUseCase()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
-
-    fun deleteBank(bankId: Int) {
-        viewModelScope.launch {
-            deleteBankUseCase(bankId)
+        fun deleteBank(bankId: Int) {
+            viewModelScope.launch {
+                deleteBankUseCase(bankId)
+            }
         }
     }
-}

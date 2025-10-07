@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "MyQR"
 include(":app")
- 
