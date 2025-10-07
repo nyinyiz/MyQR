@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Sample Bank",
+    "accountName": "John Doe",
+    "logoColor": "FF00A651",
+    "qrCodeData": "00020101021129370016A000000677010111011300669876543210208QRCASH01530376454041.005802TH6304ABCD"
+  },
+  {
+    "id": 2,
+    "name": "Demo Bank",
+    "accountName": "Jane Smith",
+    "logoColor": "FF4E2A84",
+    "qrCodeData": "00020101021129370016A000000677010111011300665555555550208QRCASH01530376454041.005802TH6304EFGH"
+  }
+]
