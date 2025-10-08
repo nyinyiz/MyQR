@@ -2,6 +2,14 @@
 
 Quick access to bank QR codes on your smartwatch for seamless digital payments.
 
+## Screenshots
+
+<div align="center">
+  <img src="screenshots/ss1.png" alt="Android Screenshot 1" width="200">
+  <img src="screenshots/ss2.png" alt="Android Screenshot 2" width="200">
+  <img src="screenshots/ss3.png" alt="Android Screenshot 3" width="200">
+</div>
+
 ## Features
 
 - Quick access of your QR code display
